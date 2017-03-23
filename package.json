@@ -1,0 +1,28 @@
+{
+  "private": true,
+  "name": "fairdesigner",
+  "scripts": {
+    "dev": "vbuild --dev",
+    "build": "vbuild"
+  },
+  "dependencies": {
+    "css-loader": "^0.26.1",
+    "file-loader": "^0.10.1",
+    "url-loader": "^0.5.8",
+    "victor": "^1.1.0",
+    "vue": "2.1.5",
+    "vue-grid-layout": "^2.1.2",
+    "vue-material": "^0.7.1",
+    "vue-sortable": "^0.1.3",
+    "vuedraggable": "^2.9.0",
+    "vuex": "^2.1.2",
+    "vuex-persistedstate": "^1.3.0"
+  },
+  "devDependencies": {
+    "node-sass": "^4.5.0",
+    "sass-loader": "^5.0.1",
+    "vue-loader": "^11.1.3",
+    "vue-template-compiler": "2.1.5",
+    "webpack": "^2.2.0"
+  }
+}
