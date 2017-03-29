@@ -36,7 +36,7 @@ export default {
     methods	: {
       reset(){
         this.translate = {x:0,y:0};
-        this.$store.commit('deselectObject');
+        this.$store.dispatch('deselectObject');
       },
       mouseDown(e,position){
         this.points.forEach((point)=>{

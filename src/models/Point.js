@@ -14,7 +14,7 @@ class Point {
       this.point.y = position.y;
     }
     mouseUp(e,position) {
-      this.vm.$store.commit('deselectObject');
+      this.vm.$store.dispatch('deselectObject');
     }
 }
 export default Point

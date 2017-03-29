@@ -10,6 +10,24 @@
       v-on:keyup.escape=""
       v-on:contextmenu.stop.prevent>
 
+      <md-dialog ref="addObjectDialog" >
+        <md-dialog-title>Dodaj objekt</md-dialog-title>
+
+        <md-dialog-content>
+          <form>
+            <md-input-container>
+              <label for="name">Ime</label>
+              <md-textarea name="name" id="name" v-model="layerName"></md-textarea>
+            </md-input-container>
+          </form>
+        </md-dialog-content>
+
+        <md-dialog-actions>
+          <md-button class="md-primary" @click.native="closeDialog('addObjectDialog',false)">Prekliči</md-button>
+          <md-button class="md-primary" @click.native="closeDialog('addObjectDialog',true)">Dodaj</md-button>
+        </md-dialog-actions>
+      </md-dialog>
+
       <defs>
         <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
           <rect width="100" height="100" fill="url(#smallGrid)"/>
@@ -21,7 +39,6 @@
                M9,11 l2,-2' stroke='#eee' stroke-width='2'/>
         </pattern>
       </defs>
-
       <g ref="viewPort" class="svg-pan-zoom_viewport">
         <layer v-for="layer in layers" v-if="layer.isVisible" :layer="layer" :width="size.width" :height="size.height"/>
         <component v-if="currentTool != undefined && currentTool.isEditing" ref="controlObject" :is="currentTool.name" v-on:controlFinished="controlFinish" keep-alive />
@@ -31,14 +48,15 @@
 </template>
 
 <script>
+  import { mapMutations, mapGetters, mapActions } from 'vuex'
+  import svg from 'svg-pan-zoom'
+  import Victor from 'victor'
   import Layer from './Layer.vue'
+  import AddObject from './AddObject.vue'
   import ToolLine from './ToolLine.vue'
   import ToolRect from './ToolRect.vue'
-  import svg from 'svg-pan-zoom'
-  import { mapMutations, mapGetters } from 'vuex'
   import Position from '../models/Position'
   import Martinez from '../external/martinez.min.js'
-  import Victor from 'victor'
 
   export default {
     props:['size'],
@@ -48,7 +66,8 @@
         showGrid:true,
         panZoom:undefined,
         activeClass: 'active',
-        vbox:vbox
+        vbox:vbox,
+        tmpObject:undefined
       }
     },
     components: { Layer,ToolLine,ToolRect },
@@ -81,7 +100,8 @@
       ...mapGetters([
         'layers',
         'selectedToolId',
-        'selectedTool'
+        'selectedTool',
+        'selectedLayerId'
       ]),
       currentTool() {
         let tool = this.selectedTool(this.selectedToolId);
@@ -129,14 +149,16 @@
 
         if(editedObject === undefined) return;
 
-        let position = new Position();
-        let victor = position.setPosition(e,this.$store.state.bounds,this.$store.state.zoomLvl).roundCoords(100,e);
+
+        let victor = Position.setPosition(e,this.$store.state.bounds,this.$store.state.zoomLvl)
+                             .roundCoords(100,e)
+                             .toVictor();
 
         switch (e.type) {
           case 'mousedown':
             if(!this.currentTool.isEditing) {
               console.log('deselect')
-              this.$store.commit('deselectObject');
+              this.$store.dispatch('deselectObject');
             }
             else
               editedObject.mouseDown(e,victor);
@@ -161,9 +183,17 @@
            area += object.points[i].x * object.points[nexti].y - object.points[i].y * object.points[nexti].x;
         }
         console.log(Math.abs(area / 2)/100);*/
-
-        this.$store.commit('addObject', { object: object })
+        this.tmpObject = object;
+        this.$refs['addObjectDialog'].open();
+      },
+      closeDialog(ref,type) {
+        if(type) {
+          let id = this.selectedLayerId,object = this.tmpObject;
+          this.$store.dispatch('addObject', { object, id });
+        }
         this.$refs.controlObject.reset();
+        this.tmpObject = undefined;
+        this.$refs[ref].close();
       },
       keyEventListener(e) {
         if(e.key === "Delete") {

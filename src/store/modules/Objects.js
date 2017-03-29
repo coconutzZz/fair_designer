@@ -1,3 +1,5 @@
+import * as types from '../mutation-types'
+
 const state = {
   objects: []
 }
@@ -12,25 +14,11 @@ const getters = {
   }
 }
 
-function generateId() {
-    return Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
-}
+
 
 const mutations = {
-  addObject(state, { object }) {
-    let layer = state.layers.find((layer) => { return layer.id === state.selectedLayer });
-    if(layer != undefined) {
-      let objId = generateId();
-      object.id = objId;
-      object.parent = layer.id;
-      object.viewType = object.type+'View';
-      object.transform = {
-        translate:{x:0,y:0}
-      }
+  [types.ADD_OBJECT](state,{ object }) {
       state.objects.push(object);
-      layer.objects.push(objId)
-    }
   },
   deleteObject(state){
     let layer = state.layers.find((layer) => { return layer.id === state.selectedLayer });
@@ -50,16 +38,7 @@ const mutations = {
       state.selectedObject = undefined;
     }
   },
-  selectObject(state,{object,e}){
-    let position = new Position();
-    let victor = position.setPosition(e,state.bounds,state.zoomLvl).roundCoords(100,e);
-    object.setStartingPosition(victor);
-    state.selectedObject = object;
-    state.mouseDown = true;
-  },
-  deselectObject(state){
-    state.selectedObject = undefined;
-  }
+  
 }
 
 export default {

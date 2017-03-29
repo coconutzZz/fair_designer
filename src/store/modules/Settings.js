@@ -3,7 +3,7 @@ const state = {
     'bg':{
       type:'bg',
       displayName:'ozadje',
-      tools:[2]
+      tools:[0,1,2]
     },
     'bg_indoor':{
       type:'bg_indoor',

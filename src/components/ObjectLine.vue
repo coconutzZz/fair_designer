@@ -95,11 +95,11 @@
       },
       mouseDownPoint(e,point) {
         let p = new Point(this,point);
-        this.$store.commit('selectObject', { object: p, e: e });
+        this.$store.dispatch('selectObject', { object:p, e });
       },
       mouseDownObject(e) {
-        let transform = new Translate(this,this.data);
-        this.$store.commit('selectObject', { object: transform, e: e });
+        let t = new Translate(this,this.data);
+        this.$store.dispatch('selectObject', { object:t, e });
       },
       mouseOverObject(){
         this.showDetails = true;
@@ -111,7 +111,6 @@
         let next = index == edges.length - 1 ? 0 : index+1,
             prev = index == 0 ? edges.length - 1 : index-1,
             _edge = new Edge(this,edge,edges[prev],edges[next]);
-
         this.$store.commit('selectObject', { object: _edge, e: e });
       }
     }

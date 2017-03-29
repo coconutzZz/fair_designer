@@ -1,3 +1,5 @@
+import * as types from '../mutation-types'
+
 const state = {
   layers: [
     {
@@ -62,6 +64,10 @@ const mutations = {
   },
   toggleVisibility(state, {layer}) {
     layer.isVisible = !layer.isVisible;
+  },
+  [types.ADD_OBJECT](state,{ object }) {
+    let layer = state.layers.find((layer) => { return layer.id === object.parent });
+    layer.objects.push(object.id);
   }
 }
 
